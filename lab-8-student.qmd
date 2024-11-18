@@ -65,6 +65,7 @@ final_table <- type_table |>
   pivot_wider(names_from = name,
               values_from = type) |>
   knitr::kable()
+print(final_table)
 ```
 
 ## Lab 3
