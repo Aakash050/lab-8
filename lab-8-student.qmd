@@ -1,6 +1,6 @@
 ---
 title: "Lab 8: Searching for Efficiency"
-author: "Your name here!"
+author: "Aakash Kapadia!"
 format: html
 editor: source
 embed-resources: true
@@ -38,13 +38,25 @@ First up, we're going to revisit Question 3 from Lab 2. This question asked:
 
 > What are the data types of the variables in this dataset?
 
-**1. Using `map_chr()`, produce a nicely formatted table of the data type of each variable in the `surveys` dataset.** Specifically, the table should have 15 columns, one for
-each variable, with the datatype of that variable immediately below it's name. 
+**1. Using `map_chr()`, produce a nicely formatted table of the data type of each variable in the `surveys` dataset.** Specifically, the table should have 15 columns, one for each variable, with the datatype of that variable immediately below it's name. 
 
 ```{r}
 #| label: map-data-types-of-surveys
+type_of <- function (x) {
+  map_chr(.x=surveys,
+        .f=typeof)
+}
 
+table <- type_of(surveys) 
 
+type_table <- table |>
+  tibble(name = names(table),
+       type = table)
+
+final_table <- type_table |>
+  pivot_wider(names_from = name,
+              values_from = type)
+print(final_table)
 ```
 
 ## Lab 3
@@ -61,7 +73,14 @@ list output back into a data frame.
 
 ```{r}
 #| label: map-to-mutate-columns
-
+evals |>
+  bind_cols(
+    evals |>
+    map_at(
+      .at=c("teacher_id", "weekday", "academic_degree", "seniority", "sex"),
+      .f=as.factor
+    )
+  )
 
 ```
 
@@ -87,8 +106,35 @@ I'm using the `sen_level` classification from Challenge 3
 
 ```{r}
 #| label: double-pivot-for-summary-table
-
-
+evals_table <- evals |>
+  mutate(sen_level=if_else(seniority<=4,
+                           "Junior",
+                           "Senior"),
+         #Found format for case_when in help section of r-studio
+         academic_degree_full=case_when(
+           academic_degree == "ma" ~ "Masters",
+           academic_degree == "dr" ~ "Doctor",
+           academic_degree == "prof" ~ "Professor",
+           academic_degree == "no_dgr" ~ "No Degree")) |>
+  select(sex, 
+         sen_level, 
+         academic_degree_full,
+         teacher_id)|>
+  summarize(
+    female_count=n_distinct(teacher_id[sex=="female"]),
+    male_count=n_distinct(teacher_id[sex=="male"]),
+    Junior=n_distinct(teacher_id[sen_level=="Junior"]),
+    Senior=n_distinct(teacher_id[sen_level=="Senior"]),
+    No_Degree=n_distinct(teacher_id[academic_degree_full=="No Degree"]),
+    Masters=n_distinct(teacher_id[academic_degree_full=="Masters"]),
+    Doctor=n_distinct(teacher_id[academic_degree_full=="Doctor"]),
+    Professor=n_distinct(teacher_id[academic_degree_full=="Professor"]))
+final_table <- evals_table |>
+  pivot_longer(cols=everything(),
+               names_to="category",
+               values_to="count") |>
+  pivot_wider(names_from=category, values_from=count)|>
+  knitr::kable()
 ```
 
 ::: {.callout-tip}
@@ -110,6 +156,6 @@ Question 1 asked you to use `across()` to make a table which summarized:
 
 ```{r}
 #| label: map-missing-values-of-fish
-
-
+fish |>
+    map_int(.f = ~ sum(is.na(.x)))
 ```
