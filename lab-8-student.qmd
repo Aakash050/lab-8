@@ -1,9 +1,17 @@
 ---
 title: "Lab 8: Searching for Efficiency"
 author: "Aakash Kapadia!"
-format: html
+format: 
+  html:  
+    embed-resources: true
+    code-tools: true
+    toc: true
+    code-fold: true
 editor: source
-embed-resources: true
+execute:
+  warning: false
+  message: false
+  echo: True
 ---
 
 ```{r}
