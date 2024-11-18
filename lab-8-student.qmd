@@ -143,6 +143,7 @@ final_table <- evals_table |>
                values_to="count") |>
   pivot_wider(names_from=category, values_from=count)|>
   knitr::kable()
+print(final_table)
 ```
 
 ::: {.callout-tip}
