@@ -63,8 +63,8 @@ type_table <- table |>
 
 final_table <- type_table |>
   pivot_wider(names_from = name,
-              values_from = type)
-print(final_table)
+              values_from = type) |>
+  knitr::kable()
 ```
 
 ## Lab 3
@@ -89,7 +89,6 @@ evals |>
       .f=as.factor
     )
   )
-
 ```
 
 Next up, we're going revisit Question 7 which asked:
